@@ -1,130 +1,141 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Menu, X } from 'lucide-react';
 import Image from 'next/image';
+import { Menu, X } from 'lucide-react';
+import ReactCountryFlag from "react-country-flag";
 
-const navItems = [
-  { id: 'home', label: 'HOME' },
-  { id: 'sejarah', label: 'SEJARAH' },
-  { id: 'destinasi', label: 'DESTINASI' },
-  { id: 'paketwisata', label: 'TRIP' },
-  { id: 'testimoni', label: 'TESTIMONI' },
-  { id: 'faq', label: 'FAQ' } 
-];
+// IMPORT CONTEXT BAHASA
+import { useLanguage } from '@/components/LanguageContext';
 
 export default function Navbar() {
-  const [activeSection, setActiveSection] = useState('home');
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [activeSection, setActiveSection] = useState('home');
+  
+  // AMBIL STATE & FUNGSI TOGGLE BAHASA GLOBAL
+  const { lang, toggleLang } = useLanguage();
 
+  // Efek tracking scroll untuk background dan active section
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
 
-      const scrollPosition = window.scrollY + 150; 
-      for (const item of navItems) {
-        const section = document.getElementById(item.id);
-        if (section) {
-          const { offsetTop, offsetHeight } = section;
-          if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
-            setActiveSection(item.id);
+      // Logika Active Section
+      const sections = ['home', 'sejarah', 'destinasi', 'peta', 'paketwisata'];
+      for (const section of sections) {
+        const element = document.getElementById(section);
+        if (element) {
+          const rect = element.getBoundingClientRect();
+          if (rect.top <= 150 && rect.bottom >= 150) {
+            setActiveSection(section);
           }
         }
       }
     };
-
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
     e.preventDefault();
-    setIsMobileMenuOpen(false); 
+    setIsOpen(false);
     const element = document.getElementById(id);
     if (element) {
-      const y = element.getBoundingClientRect().top + window.scrollY - 80; 
+      const y = element.getBoundingClientRect().top + window.scrollY - 80;
       window.scrollTo({ top: y, behavior: 'smooth' });
     }
   };
 
+  const menuItems = lang === 'id' 
+    ? [
+        { label: 'Beranda', id: 'home' },
+        { label: 'Sejarah', id: 'sejarah' },
+        { label: 'Destinasi', id: 'destinasi' },
+        { label: 'Peta', id: 'peta' },
+        { label: 'Paket Wisata', id: 'paketwisata' },
+      ]
+    : [
+        { label: 'Home', id: 'home' },
+        { label: 'History', id: 'sejarah' },
+        { label: 'Destinations', id: 'destinasi' },
+        { label: 'Map', id: 'peta' },
+        { label: 'Tour Packages', id: 'paketwisata' },
+      ];
+
   return (
-    <nav 
-      className={`fixed top-0 w-full z-50 transition-all duration-500 ease-in-out ${
-        isScrolled 
-          ? 'bg-white/5 backdrop-blur-lg border-b border-white/10' // Transparan Blur saat discroll
-          : 'bg-transparent' // Benar-benar transparan saat di atas
-      }`}
-    >
-      <div className="container mx-auto px-6 py-3 flex justify-between items-center">
+    <nav className={`fixed top-0 inset-x-0 z-[999] transition-all duration-300 ${
+      isScrolled ? 'bg-[#050810]/90 backdrop-blur-md border-b border-slate-800/50 py-4 shadow-lg' : 'bg-transparent py-6'
+    }`}>
+      <div className="w-full px-6 md:px-12 lg:px-20 xl:px-28 flex items-center justify-between">
         
-        {/* LOGO ORAHA */}
-        <div 
-          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          className="flex items-center gap-2 cursor-pointer"
-        >
-          <Image 
-            src="/Home/logo.png" 
-            alt="Oraha Logo" 
-            width={70} 
-            height={70} 
-            className="w-18 h-18 object-contain"
-          />
+        {/* LOGO */}
+        <div onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="flex items-center gap-2.5 cursor-pointer group">
+          <Image src="/Home/logo.png" alt="Oraha Logo" width={45} height={40} className="object-contain group-hover:scale-105 transition-transform" />
+          <span className="font-serif font-bold text-xl tracking-wider text-white">ORAHA</span>
         </div>
-        
-        {/* Desktop Menu */}
-        <div className="hidden md:flex gap-8 font-bold text-sm items-center">
-          {navItems.map((item) => (
-            <a
-              key={item.id}
-              href={`#${item.id}`}
-              onClick={(e) => scrollToSection(e, item.id)}
-              className={`relative transition-colors duration-300 py-2 group inline-block ${
-                activeSection === item.id ? 'text-emerald-400' : 'text-white hover:text-emerald-300'
-              }`}
-            >
-              {item.label}
-              <span 
-                className={`absolute left-0 bottom-0 w-full h-[2px] bg-emerald-500 rounded-full transition-transform duration-300 origin-left ${
-                  activeSection === item.id ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
-                }`}
-              ></span>
-            </a>
-          ))}
-        </div>
-        
-        {/* Mobile Menu Button */}
-        <div className="md:hidden">
-          <button 
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="text-white hover:text-emerald-400 transition-colors"
+
+        {/* MENU DESKTOP */}
+        <div className="hidden lg:flex items-center gap-8">
+          <ul className="flex items-center gap-8">
+            {menuItems.map((item) => (
+              <li key={item.id}>
+                <a
+                  href={`#${item.id}`}
+                  onClick={(e) => scrollToSection(e, item.id)}
+                  className={`relative font-medium text-sm transition-all duration-300 tracking-wide ${
+                    activeSection === item.id ? 'text-emerald-400' : 'text-slate-300 hover:text-emerald-400'
+                  }`}
+                >
+                  {item.label}
+                  <span className={`absolute -bottom-1 left-0 h-0.5 bg-emerald-400 transition-all duration-300 ${activeSection === item.id ? 'w-full' : 'w-0 hover:w-full'}`}></span>
+                </a>
+              </li>
+            ))}
+          </ul>
+
+          <div className="h-5 w-[1px] bg-slate-700"></div>
+
+          {/* TOGGLE BAHASA DENGAN BENDERA */}
+          <button
+            onClick={toggleLang}
+            className="flex items-center gap-2 bg-slate-900/80 border border-slate-700/60 hover:bg-emerald-600 hover:border-emerald-500 px-4 py-2 rounded-full text-white text-xs font-bold tracking-widest transition-all duration-300 shadow-md cursor-pointer"
           >
-            {isMobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
+            <ReactCountryFlag 
+              countryCode={lang === 'id' ? "ID" : "GB"} 
+              svg 
+              style={{ width: '1.2em', height: '1.2em', borderRadius: '2px' }}
+            />
+            <span className="uppercase">{lang === 'id' ? 'ID' : 'EN'}</span>
+          </button>
+        </div>
+
+        {/* MENU MOBILE */}
+        <div className="lg:hidden flex items-center gap-4">
+          <button onClick={toggleLang} className="flex items-center gap-1.5 bg-slate-900 border border-slate-700 px-3 py-1.5 rounded-full text-white text-xs font-bold">
+             <ReactCountryFlag countryCode={lang === 'id' ? "ID" : "GB"} svg style={{ width: '1.2em', height: '1.2em' }} />
+             <span>{lang === 'id' ? 'ID' : 'EN'}</span>
+          </button>
+          <button onClick={() => setIsOpen(!isOpen)} className="text-slate-300 hover:text-white">
+            {isOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
       </div>
 
-      {/* Mobile Dropdown - Transparan */}
-      <div 
-        className={`md:hidden absolute top-full left-0 w-full bg-black/30 backdrop-blur-xl border-b border-white/10 overflow-hidden transition-all duration-300 ease-in-out ${
-          isMobileMenuOpen ? 'max-h-[400px] opacity-100' : 'max-h-0 opacity-0'
-        }`}
-      >
-        <div className="flex flex-col px-6 py-4 space-y-4 font-bold text-sm">
-          {navItems.map((item) => (
-            <a
-              key={item.id}
-              href={`#${item.id}`}
-              onClick={(e) => scrollToSection(e, item.id)}
-              className={`transition-colors duration-300 ${
-                activeSection === item.id ? 'text-emerald-400 border-l-2 border-emerald-500 pl-2' : 'text-white hover:text-emerald-300 pl-2'
-              }`}
-            >
-              {item.label}
-            </a>
-          ))}
+      {/* MOBILE OVERLAY */}
+      {isOpen && (
+        <div className="lg:hidden fixed inset-x-0 top-[73px] bg-[#050810]/95 backdrop-blur-lg border-b border-slate-800 shadow-xl animate-in slide-in-from-top-4">
+          <ul className="flex flex-col p-6 space-y-4">
+            {menuItems.map((item) => (
+              <li key={item.id} className="border-b border-slate-900 pb-2">
+                <a href={`#${item.id}`} onClick={(e) => scrollToSection(e, item.id)} className="text-slate-300 hover:text-emerald-400 font-medium text-base block w-full">
+                  {item.label}
+                </a>
+              </li>
+            ))}
+          </ul>
         </div>
-      </div>
+      )}
     </nav>
   );
 }

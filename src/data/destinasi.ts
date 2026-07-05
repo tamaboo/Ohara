@@ -1,12 +1,15 @@
+// File: src/data/destinasi.ts
+
 export interface DestinasiItem {
   id: number;
   nama: string;
   lokasi: string;
   rating: string;
   harga: string;
-  img: string;      // Untuk foto portrait di kartu carousel utama (0.jpg/0.jpeg)
-  gallery: string[];// Untuk foto landscape di dalam modal (1-4)
-  desc: string;
+  img: string;
+  gallery: string[];
+  desc_id: string; // Deskripsi Bahasa Indonesia
+  desc_en: string; // Deskripsi Bahasa Inggris
 }
 
 export const destinasiData: DestinasiItem[] = [
@@ -16,16 +19,15 @@ export const destinasiData: DestinasiItem[] = [
     lokasi: 'Taman Nasional Komodo',
     rating: '4.9',
     harga: 'IDR 850.000 / orang',
-    // Foto utama menggunakan 0.jpg
     img: '/Destinasi/Manta Point/0.jpg',
-    // Galeri menggunakan 1.jpg sampai 4.jpg
     gallery: [
       '/Destinasi/Manta Point/1.jpg',
       '/Destinasi/Manta Point/2.jpg',
       '/Destinasi/Manta Point/3.jpg',
       '/Destinasi/Manta Point/4.jpg',
     ],
-    desc: 'Lokasi menyelam dan snorkeling terbaik untuk bercengkerama langsung dengan Ikan Pari Manta raksasa yang ramah di habitat aslinya dengan arus air yang jernih.',
+    desc_id: 'Lokasi menyelam dan snorkeling terbaik untuk bercengkerama langsung dengan Ikan Pari Manta raksasa yang ramah di habitat aslinya dengan arus air yang jernih.',
+    desc_en: 'The best diving and snorkeling spot to interact directly with giant friendly Manta Rays in their natural habitat amidst crystal clear waters.',
   },
   {
     id: 2,
@@ -33,7 +35,6 @@ export const destinasiData: DestinasiItem[] = [
     lokasi: 'Taman Nasional Komodo',
     rating: '4.8',
     harga: 'IDR 750.000 / orang',
-    // KHUSUS PULAU RINCA: Menggunakan ekstensi .jpeg
     img: '/Destinasi/Pulau Rinca/0.jpeg',
     gallery: [
       '/Destinasi/Pulau Rinca/1.jpeg',
@@ -41,7 +42,8 @@ export const destinasiData: DestinasiItem[] = [
       '/Destinasi/Pulau Rinca/3.jpeg',
       '/Destinasi/Pulau Rinca/4.jpeg',
     ],
-    desc: 'Habitat asli komodo dengan jalur trekking savana yang menantang dan pemandangan perbukitan pesisir yang spektakuler dari puncak pulau.',
+    desc_id: 'Habitat asli komodo dengan jalur trekking savana yang menantang dan pemandangan perbukitan pesisir yang spektakuler dari puncak pulau.',
+    desc_en: 'A natural habitat of Komodo dragons featuring challenging savanna trekking paths and spectacular coastal hill views from the island\'s peak.',
   },
   {
     id: 3,
@@ -49,7 +51,6 @@ export const destinasiData: DestinasiItem[] = [
     lokasi: 'Taman Nasional Komodo',
     rating: '4.9',
     harga: 'IDR 600.000 / orang',
-    // KHUSUS TAKA MAKASAR: Menggunakan ekstensi .jpeg
     img: '/Destinasi/Taka Makasar/0.jpeg',
     gallery: [
       '/Destinasi/Taka Makasar/1.jpeg',
@@ -57,7 +58,8 @@ export const destinasiData: DestinasiItem[] = [
       '/Destinasi/Taka Makasar/3.jpg',
       '/Destinasi/Taka Makasar/4.jpg',
     ],
-    desc: 'Pulau pasir timbul (sandbank) berukuran kecil yang dikelilingi oleh air laut berwarna pirus jernih dan terumbu karang dangkal yang sangat indah.',
+    desc_id: 'Pulau pasir timbul (sandbank) berukuran kecil yang dikelilingi oleh air laut berwarna pirus jernih dan terumbu karang dangkal yang sangat indah.',
+    desc_en: 'A small crescent-shaped sandbank surrounded by turquoise clear sea water and incredibly beautiful shallow coral reefs.',
   },
   {
     id: 4,
@@ -72,7 +74,8 @@ export const destinasiData: DestinasiItem[] = [
       '/Destinasi/Pulau Padar/3.jpg',
       '/Destinasi/Pulau Padar/4.jpg',
     ],
-    desc: 'Ikon utama Labuan Bajo dengan pemandangan legendaris dari puncak bukit yang memperlihatkan tiga lekukan pantai berpasir putih, hitam, dan merah muda sekaligus.',
+    desc_id: 'Ikon utama Labuan Bajo dengan pemandangan legendaris dari puncak bukit yang memperlihatkan tiga lekukan pantai berpasir putih, hitam, dan merah muda sekaligus.',
+    desc_en: 'The main icon of Labuan Bajo with a legendary hilltop view showcasing three crescent beaches with white, black, and pink sands simultaneously.',
   },
   {
     id: 5,
@@ -87,7 +90,8 @@ export const destinasiData: DestinasiItem[] = [
       '/Destinasi/Pink Beach/3.jpg',
       '/Destinasi/Pink Beach/4.jpg',
     ],
-    desc: 'Pantai eksotis dengan pasir berwarna merah muda alami yang berasal dari serpihan karang merah hancur, sangat cocok untuk bersantai dan fotografi fotografi bawah air.',
+    desc_id: 'Pantai eksotis dengan pasir berwarna merah muda alami yang berasal dari serpihan karang merah hancur, sangat cocok untuk bersantai dan fotografi bawah air.',
+    desc_en: 'An exotic beach with natural pink sand derived from crushed red coral fragments, perfect for relaxing and underwater photography.',
   },
   {
     id: 6,
@@ -102,7 +106,8 @@ export const destinasiData: DestinasiItem[] = [
       '/Destinasi/Pulau Kalong/3.jpg',
       '/Destinasi/Pulau Kalong/4.jpg',
     ],
-    desc: 'Tempat terbaik untuk menyaksikan fenomena ribuan kelelawar raksasa (kalong) yang terbang menghiasi langit senja saat matahari terbenam berlatar hutan bakau.',
+    desc_id: 'Tempat terbaik untuk menyaksikan fenomena ribuan kelelawar raksasa (kalong) yang terbang menghiasi langit senja saat matahari terbenam berlatar hutan bakau.',
+    desc_en: 'The best place to witness the phenomenon of thousands of giant fruit bats flying across the twilight sky at sunset against a mangrove forest backdrop.',
   },
   {
     id: 7,
@@ -117,7 +122,8 @@ export const destinasiData: DestinasiItem[] = [
       '/Destinasi/Pulau Kanawa/3.jpg',
       '/Destinasi/Pulau Kanawa/4.jpg',
     ],
-    desc: 'Gerbang surga bawah laut dengan dermaga kayu ikonik, tempat di mana kamu bisa melihat ikan-ikan hias, bintang laut, dan karang tepat dari atas permukaan air jernih.',
+    desc_id: 'Gerbang surga bawah laut dengan dermaga kayu ikonik, tempat di mana kamu bisa melihat ikan-ikan hias dan karang tepat dari atas permukaan air jernih.',
+    desc_en: 'A gateway to underwater paradise featuring an iconic wooden pier, where you can see ornamental fish and corals right from the clear water surface.',
   },
   {
     id: 8,
@@ -132,7 +138,8 @@ export const destinasiData: DestinasiItem[] = [
       '/Destinasi/Pulau Kelor/3.jpg',
       '/Destinasi/Pulau Kelor/4.jpg',
     ],
-    desc: 'Pulau tenang dengan perbukitan hijau terjal yang menawarkan panorama laut lepas Labuan Bajo dari puncaknya, cocok untuk pendakian singkat dan piknik pantai.',
+    desc_id: 'Pulau tenang dengan perbukitan hijau terjal yang menawarkan panorama laut lepas Labuan Bajo dari puncaknya, cocok untuk pendakian singkat dan piknik pantai.',
+    desc_en: 'A peaceful island with steep green hills offering panoramic views of the open sea of Labuan Bajo from its peak, perfect for short hikes and beach picnics.',
   },
   {
     id: 9,
@@ -147,7 +154,8 @@ export const destinasiData: DestinasiItem[] = [
       '/Destinasi/Batu Bolong/3.jpeg',
       '/Destinasi/Batu Bolong/4.jpg',
     ],
-    desc: 'Situs menyelam kelas dunia berbentuk batu karang berlubang dengan keanekaragaman hayati laut yang luar biasa padat, dari ikan warna-warni hingga penyu laut.',
+    desc_id: 'Situs menyelam kelas dunia berbentuk batu karang berlubang dengan keanekaragaman hayati laut yang sangat padat, dari ikan warna-warni hingga penyu.',
+    desc_en: 'A world-class diving site featuring a hollow rock formation with incredibly dense marine biodiversity, ranging from colorful fish to sea turtles.',
   },
   {
     id: 10,
@@ -162,6 +170,7 @@ export const destinasiData: DestinasiItem[] = [
       '/Destinasi/Loh Liang/3.jpg',
       '/Destinasi/Loh Liang/4.jpg',
     ],
-    desc: 'Pintu masuk utama wisata di Pulau Komodo dan pusat observasi terbesar satwa komodo liar dengan berbagai rute trekking yang dipandu oleh ranger berpengalaman.',
+    desc_id: 'Pintu masuk utama wisata di Pulau Komodo dan pusat observasi terbesar satwa komodo liar dengan berbagai rute trekking yang dipandu oleh ranger berpengalaman.',
+    desc_en: 'The main entry point for Komodo Island tourism and the largest observation center for wild Komodo dragons with various trekking routes guided by experienced rangers.',
   },
 ];

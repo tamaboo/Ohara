@@ -11,8 +11,11 @@ import 'swiper/css';
 import 'swiper/css/effect-coverflow';
 
 import { destinasiData } from '@/data/destinasi'; 
-// IMPORT KOMPONEN MODAL BARU KITA
 import DetailDestinasiModal from '@/components/DetailDestinasiModal';
+
+// 1. IMPORT CONTEXT BAHASA DAN DICTIONARY
+import { useLanguage } from '@/components/LanguageContext';
+import { dict } from '@/data/dictionary';
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -24,6 +27,10 @@ export default function Destinasi() {
   const carouselRef = useRef<HTMLDivElement>(null);
   
   const [selectedDest, setSelectedDest] = useState<any>(null);
+
+  // 2. PANGGIL STATE BAHASA AKTIF & DICTIONARY
+  const { lang } = useLanguage();
+  const t = dict[lang].destinasi;
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -55,28 +62,26 @@ export default function Destinasi() {
 
   return (
     <>
-      {/* SECTION UTAMA */}
-      <section ref={sectionRef} id="destinasi" className="relative w-full py-24 bg-[#050810] overflow-hidden">
+      <section ref={sectionRef} id="destinasi" className="relative w-full pt-40 pb-20 md:py-28 bg-[#050810] overflow-hidden">
         
-        {/* BACKGROUND TERANG: opacity-100 dan tanpa gradient gelap di tengah */}
+        {/* BACKGROUND */}
         <div className="absolute inset-0 z-0">
           <img 
             src="/Destinasi/bg.png" 
             alt="Background Destinasi" 
-            className="w-full h-full object-cover object-center opacity-100 transition-transform duration-1000 ease-out" 
+            className="w-full h-full object-cover object-top md:object-center opacity-100 transition-transform duration-1000 ease-out" 
           />
         </div>
 
         <div className="container mx-auto px-4 relative z-10">
           
-          {/* JUDUL */}
-          <div ref={headerRef} className="text-center max-w-5xl mx-auto mb-16 space-y-4 opacity-0">
-            <h2 className="text-4xl md:text-5xl font-serif text-transparent bg-clip-text bg-gradient-to-r from-yellow-600 to-yellow-300 drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
-              EXPERIENCES<br /> IN THE HEART OF KOMODO
+          {/* JUDUL (TERHUBUNG KE DICTIONARY) */}
+          <div ref={headerRef} className="text-center max-w-5xl mx-auto mb-10 md:mb-16 space-y-3 md:space-y-4 opacity-0 px-2">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-500 to-yellow-200 drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)] leading-tight">
+              {t.title1}<br /> {t.title2}
             </h2>
-            <p className="text-slate-200 text-sm md:text-base uppercase tracking-widest font-medium drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
-              DISCOVER EXTRAORDINARY WILDLIFE, PRISTINE BEACHES, BREATHTAKING LANDSCAPES, 
-              AND AUTHENTIC ISLAND CULTURE—ALL IN ONE UNFORGETTABLE DESTINATION.
+            <p className="text-slate-200 text-[10px] sm:text-xs md:text-base uppercase tracking-[0.15em] md:tracking-widest font-medium drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] max-w-xs sm:max-w-md md:max-w-none mx-auto leading-relaxed md:leading-normal">
+              {t.subtitle}
             </p>
           </div>
 
@@ -96,29 +101,25 @@ export default function Destinasi() {
               {destinasiData.map((dest) => (
                 <SwiperSlide key={dest.id} style={{ width: '320px', height: '450px' }} className="rounded-3xl">
                   
-                  {/* KONTAINER KARTU UTAMA */}
                   <div 
                     onClick={() => setSelectedDest(dest)}
                     className="group relative w-full h-full rounded-3xl overflow-hidden border border-slate-800/80 bg-[#050810] cursor-pointer transition-all duration-500 ease-out hover:-translate-y-3 hover:border-emerald-500/50 hover:shadow-[0_20px_40px_-15px_rgba(16,185,129,0.3)]"
                   >
                     
-                    {/* Background Image dengan Smooth Zoom */}
                     <img 
                       src={dest.img} 
                       alt={dest.nama} 
                       className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 ease-out group-hover:scale-110" 
                     />
                     
-                    {/* Dark Overlay */}
                     <div className="absolute inset-0 bg-black/40 group-hover:bg-black/60 transition-colors duration-500"></div>
                     
+                    {/* LABEL POPULER */}
                     <div className="absolute top-4 left-4 bg-emerald-800/90 backdrop-blur-sm border border-emerald-600/30 text-white text-[10px] font-bold px-3 py-1.5 rounded-full uppercase tracking-wider">
-                      Terpopuler
+                      {t.popular}
                     </div>
 
-                    {/* KONTAINER KONTEN BAWAH */}
                     <div className="absolute bottom-0 left-0 right-0 p-6 flex flex-col justify-end h-full">
-                      
                       <div className="transform translate-y-24 group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.2,0.8,0.2,1)]">
                         
                         <div className="flex items-center gap-1 text-emerald-500 mb-2">
@@ -129,8 +130,9 @@ export default function Destinasi() {
                         
                         <div className="max-h-0 opacity-0 group-hover:max-h-[200px] group-hover:opacity-100 transition-all duration-500 ease-in-out">
                           
+                          {/* DESKRIPSI DINAMIS BERDASARKAN BAHASA */}
                           <p className="text-slate-300 text-xs line-clamp-2 leading-relaxed mt-2 mb-4">
-                            {dest.desc}
+                            {lang === 'id' ? dest.desc_id : dest.desc_en}
                           </p>
 
                           <div className="flex items-center gap-1 text-yellow-500 mb-4">
@@ -141,9 +143,9 @@ export default function Destinasi() {
 
                           <div className="flex items-end justify-between border-t border-slate-700/60 pt-4">
                             <div>
-                              <p className="text-[10px] text-slate-400 mb-1">Mulai dari</p>
+                              <p className="text-[10px] text-slate-400 mb-1">{t.startFrom}</p>
                               <p className="text-white font-bold text-sm">
-                                {dest.harga.split(' /')[0]} <span className="text-xs text-slate-400 font-normal">/ orang</span>
+                                {dest.harga.split(' /')[0]} <span className="text-xs text-slate-400 font-normal">{t.perPerson}</span>
                               </p>
                             </div>
                             
@@ -158,7 +160,6 @@ export default function Destinasi() {
                             </button>
                           </div>
                         </div>
-
                       </div>
                     </div>
                   </div>
@@ -169,7 +170,7 @@ export default function Destinasi() {
         </div>
       </section>
 
-      {/* PANGGIL KOMPONEN MODAL */}
+      {/* MODAL (PASTIKAN DI DALAM MODAL JUGA MEMAKAI useLanguage() UNTUK DESKRIPSINYA) */}
       <DetailDestinasiModal 
         dest={selectedDest} 
         onClose={() => setSelectedDest(null)} 
