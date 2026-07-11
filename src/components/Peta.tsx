@@ -11,7 +11,7 @@ import { dict } from '@/data/dictionary';
 
 // DATA 10 TITIK PIN DESTINASI
 const mapLocations = [
-  { id: 1, name: 'Loh Liang', desc: 'Pusat observasi satwa komodo liar.', img: '/Destinasi/Loh Liang/0.jpeg', top: '34%', left: '39%', position: 'bottom' },
+  { id: 1, name: 'Loh Liang', desc: 'Pusat observasi satwa komodo liar.', img: '/Destinasi/loh-liang/0.png', top: '34%', left: '39%', position: 'bottom' },
   { id: 2, name: 'Pink Beach', desc: 'Pantai eksotis pasir merah muda.', img: '/Destinasi/Pink Beach/0.jpg', top: '43%', left: '36%', position: 'bottom' },
   { id: 3, name: 'Pulau Padar', desc: 'Pemandangan 3 teluk pantai unik.', img: '/Destinasi/Pulau Padar/0.jpg', top: '51%', left: '33%', position: 'bottom' },
   { id: 4, name: 'Batu Bolong', desc: 'Situs menyelam kelas dunia.', img: '/Destinasi/Batu Bolong/0.jpeg', top: '40%', left: '42%', position: 'top' },
