@@ -33,16 +33,26 @@ export default function Faq() {
 
       <div className="max-w-4xl mx-auto relative z-10">
         <ScrollReveal>
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
+          <div className="text-center mb-16 flex flex-col items-center">
+            
+            {/* Opsi tambahan: Jika Anda ingin menambahkan sub-judul kecil di atas seperti section lain */}
+            <span className="text-emerald-400 font-bold uppercase tracking-[0.2em] text-[10px] md:text-xs mb-3 block drop-shadow-md">
+              FAQ & Info
+            </span>
+
+            {/* Menambahkan font-serif dan drop-shadow yang lebih kuat */}
+            <h2 className="text-4xl md:text-5xl lg:text-[54px] font-serif font-bold text-white mb-4 drop-shadow-lg leading-tight">
               {t.title1} <span className="text-emerald-500">{t.title2}</span>
             </h2>
-            <p className="text-slate-200 text-lg drop-shadow-md">
+            
+            {/* Merapikan paragraf deskripsi agar tidak terlalu besar dan lebih terbaca */}
+            <p className="text-slate-200 text-sm md:text-base max-w-2xl mx-auto leading-relaxed drop-shadow-md">
               {t.desc}
             </p>
+            
           </div>
         </ScrollReveal>
-
+        
         <div className="space-y-4">
           {t.data.map((faq: any, index: number) => {
             const isOpen = openIndex === index;

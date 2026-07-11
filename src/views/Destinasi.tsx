@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from 'react';
-import { MapPin, Star, ArrowRight } from 'lucide-react';
+// 1. Tambahkan Heart dan Share2 di import lucide-react
+import { MapPin, Star, ArrowRight, Heart, Share2 } from 'lucide-react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -13,7 +14,6 @@ import 'swiper/css/effect-coverflow';
 import { destinasiData } from '@/data/destinasi'; 
 import DetailDestinasiModal from '@/components/DetailDestinasiModal';
 
-// 1. IMPORT CONTEXT BAHASA DAN DICTIONARY
 import { useLanguage } from '@/components/LanguageContext';
 import { dict } from '@/data/dictionary';
 
@@ -27,10 +27,12 @@ export default function Destinasi() {
   const carouselRef = useRef<HTMLDivElement>(null);
   
   const [selectedDest, setSelectedDest] = useState<any>(null);
+  
+  // 2. Tambahkan State untuk menyimpan daftar ID destinasi yang disukai (Favorit)
+  const [likedDests, setLikedDests] = useState<number[]>([]);
 
-  // 2. PANGGIL STATE BAHASA AKTIF & DICTIONARY
   const { lang } = useLanguage();
-  const t = dict[lang].destinasi;
+  const t = dict[lang]?.destinasi;
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -60,6 +62,29 @@ export default function Destinasi() {
     return () => { document.body.style.overflow = 'unset'; }
   }, [selectedDest]);
 
+  // 3. Fungsi untuk menangani klik tombol Favorit
+  const toggleLike = (e: React.MouseEvent, id: number) => {
+    e.stopPropagation(); // Mencegah klik menembus ke kartu (agar modal tidak terbuka)
+    setLikedDests(prev => 
+      prev.includes(id) ? prev.filter(itemId => itemId !== id) : [...prev, id]
+    );
+  };
+
+  // 4. Fungsi untuk menangani klik tombol Share
+  const handleShare = (e: React.MouseEvent, name: string) => {
+    e.stopPropagation();
+    if (navigator.share) {
+      navigator.share({
+        title: `Jelajahi ${name} di ORAHA`,
+        url: window.location.href,
+      }).catch(console.error);
+    } else {
+      alert(`Bagikan tautan destinasi: ${name}`);
+    }
+  };
+
+  if (!t) return null;
+
   return (
     <>
       <section ref={sectionRef} id="destinasi" className="relative w-full pt-40 pb-20 md:py-28 bg-[#050810] overflow-hidden">
@@ -75,7 +100,7 @@ export default function Destinasi() {
 
         <div className="container mx-auto px-4 relative z-10">
           
-          {/* JUDUL (TERHUBUNG KE DICTIONARY) */}
+          {/* JUDUL */}
           <div ref={headerRef} className="text-center max-w-5xl mx-auto mb-10 md:mb-16 space-y-3 md:space-y-4 opacity-0 px-2">
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-500 to-yellow-200 drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)] leading-tight">
               {t.title1}<br /> {t.title2}
@@ -98,80 +123,109 @@ export default function Destinasi() {
               modules={[EffectCoverflow, Autoplay]}
               className="w-full py-10"
             >
-              {destinasiData.map((dest) => (
-                <SwiperSlide key={dest.id} style={{ width: '320px', height: '450px' }} className="rounded-3xl">
-                  
-                  <div 
-                    onClick={() => setSelectedDest(dest)}
-                    className="group relative w-full h-full rounded-3xl overflow-hidden border border-slate-800/80 bg-[#050810] cursor-pointer transition-all duration-500 ease-out hover:-translate-y-3 hover:border-emerald-500/50 hover:shadow-[0_20px_40px_-15px_rgba(16,185,129,0.3)]"
-                  >
-                    
-                    <img 
-                      src={dest.img} 
-                      alt={dest.nama} 
-                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 ease-out group-hover:scale-110" 
-                    />
-                    
-                    <div className="absolute inset-0 bg-black/40 group-hover:bg-black/60 transition-colors duration-500"></div>
-                    
-                    {/* LABEL POPULER */}
-                    <div className="absolute top-4 left-4 bg-emerald-800/90 backdrop-blur-sm border border-emerald-600/30 text-white text-[10px] font-bold px-3 py-1.5 rounded-full uppercase tracking-wider">
-                      {t.popular}
-                    </div>
+              {destinasiData.map((dest) => {
+                // Cek apakah destinasi ini disukai
+                const isLiked = likedDests.includes(dest.id);
 
-                    <div className="absolute bottom-0 left-0 right-0 p-6 flex flex-col justify-end h-full">
-                      <div className="transform translate-y-24 group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.2,0.8,0.2,1)]">
+                return (
+                  <SwiperSlide key={dest.id} style={{ width: '320px', height: '450px' }} className="rounded-3xl">
+                    
+                    <div 
+                      onClick={() => setSelectedDest(dest)}
+                      className="group relative w-full h-full rounded-3xl overflow-hidden border border-slate-800/80 bg-[#050810] cursor-pointer transition-all duration-500 ease-out hover:-translate-y-3 hover:border-emerald-500/50 hover:shadow-[0_20px_40px_-15px_rgba(16,185,129,0.3)]"
+                    >
+                      
+                      <img 
+                        src={dest.img} 
+                        alt={dest.nama} 
+                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 ease-out group-hover:scale-110" 
+                      />
+                      
+                      <div className="absolute inset-0 bg-black/40 group-hover:bg-black/60 transition-colors duration-500"></div>
+                      
+                      {/* LABEL POPULER (Kiri Atas) */}
+                      <div className="absolute top-4 left-4 z-20 bg-emerald-800/90 backdrop-blur-sm border border-emerald-600/30 text-white text-[10px] font-bold px-3 py-1.5 rounded-full uppercase tracking-wider">
+                        {t.popular}
+                      </div>
+
+                      {/* ======================================================== */}
+                      {/* TOMBOL SHARE & FAVORIT (Kanan Atas) */}
+                      {/* ======================================================== */}
+                      <div className="absolute top-4 right-4 z-20 flex items-center gap-2 opacity-0 -translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 ease-out">
                         
-                        <div className="flex items-center gap-1 text-emerald-500 mb-2">
-                          <MapPin size={14} />
-                          <span className="text-[10px] font-bold uppercase tracking-widest">{dest.lokasi}</span>
-                        </div>
-                        <h3 className="text-2xl font-serif text-white mb-2">{dest.nama}</h3>
-                        
-                        <div className="max-h-0 opacity-0 group-hover:max-h-[200px] group-hover:opacity-100 transition-all duration-500 ease-in-out">
+                        {/* Tombol Share */}
+                        <button 
+                          onClick={(e) => handleShare(e, dest.nama)}
+                          className="w-8 h-8 rounded-full bg-black/40 backdrop-blur-md border border-white/20 flex items-center justify-center text-white hover:bg-blue-500 hover:border-blue-500 transition-colors shadow-lg"
+                        >
+                          <Share2 size={13} strokeWidth={2.5} />
+                        </button>
+
+                        {/* Tombol Favorit (Love) */}
+                        <button 
+                          onClick={(e) => toggleLike(e, dest.id)}
+                          className={`w-8 h-8 rounded-full backdrop-blur-md border flex items-center justify-center transition-all shadow-lg hover:scale-110 active:scale-90 ${
+                            isLiked 
+                              ? 'bg-rose-500/20 border-rose-500 text-rose-500' 
+                              : 'bg-black/40 border-white/20 text-white hover:bg-rose-500/80 hover:border-rose-500'
+                          }`}
+                        >
+                          <Heart size={14} strokeWidth={2.5} className={isLiked ? "fill-rose-500" : ""} />
+                        </button>
+                      </div>
+
+                      <div className="absolute bottom-0 left-0 right-0 p-6 flex flex-col justify-end h-full">
+                        <div className="transform translate-y-24 group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.2,0.8,0.2,1)]">
                           
-                          {/* DESKRIPSI DINAMIS BERDASARKAN BAHASA */}
-                          <p className="text-slate-300 text-xs line-clamp-2 leading-relaxed mt-2 mb-4">
-                            {lang === 'id' ? dest.desc_id : dest.desc_en}
-                          </p>
-
-                          <div className="flex items-center gap-1 text-yellow-500 mb-4">
-                            <Star size={14} fill="currentColor" />
-                            <span className="text-xs font-bold text-white">{dest.rating}</span>
-                            <span className="text-xs text-slate-400">(280)</span>
+                          <div className="flex items-center gap-1 text-emerald-500 mb-2">
+                            <MapPin size={14} />
+                            <span className="text-[10px] font-bold uppercase tracking-widest">{dest.lokasi}</span>
                           </div>
-
-                          <div className="flex items-end justify-between border-t border-slate-700/60 pt-4">
-                            <div>
-                              <p className="text-[10px] text-slate-400 mb-1">{t.startFrom}</p>
-                              <p className="text-white font-bold text-sm">
-                                {dest.harga.split(' /')[0]} <span className="text-xs text-slate-400 font-normal">{t.perPerson}</span>
-                              </p>
-                            </div>
+                          <h3 className="text-2xl font-serif text-white mb-2">{dest.nama}</h3>
+                          
+                          <div className="max-h-0 opacity-0 group-hover:max-h-[200px] group-hover:opacity-100 transition-all duration-500 ease-in-out">
                             
-                            <button 
-                              suppressHydrationWarning // <--- TAMBAHKAN INI DI SINI
-                              onClick={(e) => {
-                                e.stopPropagation(); 
-                                setSelectedDest(dest);
-                              }}
-                              className="w-10 h-10 rounded-full bg-emerald-600/20 border border-emerald-500/50 flex items-center justify-center text-emerald-400 hover:bg-emerald-500 hover:text-white transition-all duration-300 shadow-[0_0_15px_rgba(16,185,129,0.2)]"
-                            >
-                              <ArrowRight size={18} />
-                            </button>
+                            <p className="text-slate-300 text-xs line-clamp-2 leading-relaxed mt-2 mb-4">
+                              {lang === 'id' ? dest.desc_id : dest.desc_en}
+                            </p>
+
+                            <div className="flex items-center gap-1 text-yellow-500 mb-4">
+                              <Star size={14} fill="currentColor" />
+                              <span className="text-xs font-bold text-white">{dest.rating}</span>
+                              <span className="text-xs text-slate-400">(280)</span>
+                            </div>
+
+                            <div className="flex items-end justify-between border-t border-slate-700/60 pt-4">
+                              <div>
+                                <p className="text-[10px] text-slate-400 mb-1">{t.startFrom}</p>
+                                <p className="text-white font-bold text-sm">
+                                  {dest.harga.split(' /')[0]} <span className="text-xs text-slate-400 font-normal">{t.perPerson}</span>
+                                </p>
+                              </div>
+                              
+                              <button 
+                                suppressHydrationWarning
+                                onClick={(e) => {
+                                  e.stopPropagation(); 
+                                  setSelectedDest(dest);
+                                }}
+                                className="w-10 h-10 rounded-full bg-emerald-600/20 border border-emerald-500/50 flex items-center justify-center text-emerald-400 hover:bg-emerald-500 hover:text-white transition-all duration-300 shadow-[0_0_15px_rgba(16,185,129,0.2)]"
+                              >
+                                <ArrowRight size={18} />
+                              </button>
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                </SwiperSlide>
-              ))}
+                  </SwiperSlide>
+                );
+              })}
             </Swiper>
           </div>
         </div>
       </section>
 
-      {/* MODAL (PASTIKAN DI DALAM MODAL JUGA MEMAKAI useLanguage() UNTUK DESKRIPSINYA) */}
       <DetailDestinasiModal 
         dest={selectedDest} 
         onClose={() => setSelectedDest(null)} 
