@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
+    "aos": "^2.3.4",
     "gsap": "^3.15.0",
     "lucide-react": "^1.23.0",
     "next": "^16.2.10",
@@ -19,6 +20,7 @@
     "swiper": "^14.0.1"
   },
   "devDependencies": {
+    "@types/aos": "^3.0.8",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

@@ -61,6 +61,9 @@ Jalankan perintah berikut untuk menginstal semua dependencies yang diperlukan:
 ```bash
 npm install
 ```
+(Penting: Untuk memastikan fitur animasi dan ikon UI berjalan sempurna, jalankan juga perintah instalasi tambahan berikut):
+    - npm install gsap aos lucide-react
+    - npm install --save-dev @types/aos
 
 ### 3. Konfigurasi Environment Variables
 
@@ -79,23 +82,49 @@ http://localhost:3000
 
 Untuk memudahkan navigasi dalam pengembangan, berikut adalah struktur folder utama dari proyek ORAHA:
 
-oraha-ecotourism/
-├── public/ # Folder untuk semua aset statis (gambar, ikon, logo)
-│ ├── Destinasi/ # Gambar untuk detail destinasi wisata
-│ ├── Faq/ # Gambar latar belakang (background) komponen FAQ
-│ ├── Home/ # Aset gambar halaman utama dan Logo ORAHA
-│ ├── Paket/ # Gambar cover untuk kartu paket wisata
-│ └── Peta/ # Gambar latar belakang denah kepulauan Peta
+Oraha/
+├── public/                 # 📂 Folder untuk aset statis (gambar, ikon, logo, video)
+│   ├── Destinasi/          # Kumpulan gambar destinasi (pastikan penamaan kebab-case, misal: loh-liang)
+│   ├── Faq/                # Aset gambar untuk komponen FAQ
+│   ├── Home/               # Aset halaman utama, logo, dan video intro
+│   ├── Paket/              # Gambar cover untuk kartu penawaran paket wisata
+│   └── Peta/               # Gambar latar belakang untuk peta interaktif
+│
 ├── src/
-│ ├── app/ # Tata letak utama dan routing Next.js (App Router)
-│ ├── components/ # Komponen UI Reusable (Navbar, Peta, PaketWisata, Testimoni, dll)
-│ ├── context/ # Global State Management (LanguageContext.tsx untuk dwibahasa)
-│ └── data/ # Penyimpanan Data Tekstual
-│ └── dictionary.ts # KUMPULAN TEKS KONTEN (Pusat Terjemahan ID & EN)
-│ └── destinasi.ts # Kumpulan destinasi wisata
-├── package.json # Daftar konfigurasi library, dependencies, dan script npm
-├── tailwind.config.ts # Kustomisasi tema, warna, dan breakpoint Tailwind CSS
-└── README.md # Dokumentasi proyek yang sedang Anda baca ini
+│   ├── app/                # ⚙️ App Router Next.js (Konfigurasi & Rute Utama)
+│   │   ├── api/            # Route handlers untuk backend/API internal (misal: endpoint chatbot)
+│   │   ├── favicon.ico     # Ikon tab browser
+│   │   ├── globals.css     # Styling global dan inisialisasi Tailwind CSS
+│   │   ├── layout.tsx      # Layout utama pembungkus aplikasi (termasuk Metadata SEO)
+│   │   └── page.tsx        # Halaman entry-point utama (menggabungkan semua views)
+│   │
+│   ├── components/         # 🧩 Komponen UI Reusable & Fungsional
+│   │   ├── Chatbot.tsx              # Asisten virtual pintar berbasis AI
+│   │   ├── CustomCursor.tsx         # Animasi kursor kustom interaktif
+│   │   ├── DetailDestinasiModal.tsx # Pop-up modal untuk detail lengkap wisata
+│   │   ├── Faq.tsx                  # Komponen akordeon tanya jawab
+│   │   ├── Footer.tsx               # Bagian penutup navigasi bawah
+│   │   ├── LanguageContext.tsx      # Provider Context API untuk fitur dwibahasa (ID/EN)
+│   │   ├── MusicPlayer.tsx          # Pemutar audio latar belakang
+│   │   ├── Navbar.tsx               # Menu navigasi atas responsif
+│   │   ├── Peta.tsx                 # Peta interaktif dengan titik pin animasi
+│   │   ├── ScrollReveal.tsx         # Komponen wrapper untuk animasi transisi scroll
+│   │   ├── SplashScreen.tsx         # Layar pemuatan (loading) awal aplikasi
+│   │   └── Testimoni.tsx            # Carousel ulasan pengunjung
+│   │
+│   ├── data/               # 🗄️ Penyimpanan Data Statis & Tekstual
+│   │   ├── destinasi.ts    # Database objek destinasi wisata (galeri, deskripsi, dll)
+│   │   └── dictionary.ts   # Kumpulan teks terjemahan lengkap (ID & EN)
+│   │
+│   └── views/              # 🖼️ Komponen Halaman Utuh (Section Layouts)
+│       ├── Destinasi.tsx   # Tampilan bagian kartu grid destinasi
+│       ├── Home.tsx        # Tampilan Hero section utama
+│       ├── PaketWisata.tsx # Tampilan penawaran tur dan simulasi pembayaran
+│       └── Sejarah.tsx     # Tampilan interaktif GSAP untuk sejarah Komodo
+│
+├── package.json            # 📦 Daftar konfigurasi dependencies npm dan script eksekusi
+├── tailwind.config.ts      # 🎨 Kustomisasi tema, utility, dan animasi Tailwind CSS
+└── README.md               # 📖 Dokumentasi proyek
 
 ### 📜 Lisensi
 

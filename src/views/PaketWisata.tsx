@@ -1,71 +1,81 @@
-  "use client";
+"use client";
 
-  import React, { useState, useRef } from 'react';
-  import { ArrowRight, ArrowLeft, X, Calendar, CreditCard, Wallet, QrCode, Building2, ChevronLeft, CheckCircle2, Copy } from 'lucide-react';
-  import { useLanguage } from '@/components/LanguageContext';
-  import { dict } from '@/data/dictionary';
+import React, { useState, useRef, useEffect } from 'react';
+import AOS from 'aos';
+import 'aos/dist/aos.css';
+import { ArrowRight, ArrowLeft, X, Calendar, CreditCard, Wallet, QrCode, Building2, ChevronLeft, CheckCircle2, Copy } from 'lucide-react';
+import { useLanguage } from '@/components/LanguageContext';
+import { dict } from '@/data/dictionary';
 
-  // Data Trip (Tanpa text translation hardcode)
-  const trips = [
-    { id: 1, title: '1 Day Trip', enTitle: '1 Day Trip', route: 'Labuan Bajo - Rinca - Padar - Pink Beach', enRoute: 'Labuan Bajo - Rinca - Padar - Pink Beach', price: 750000, type: 'normal', bgImage: '/Paket/1.jpg' },
-    { id: 2, title: '2 Day 1 Night', enTitle: '2 Day 1 Night', route: 'Komodo - Manta Point - Taka Makassar - Padar', enRoute: 'Komodo - Manta Point - Taka Makassar - Padar', price: 1650000, type: 'normal', bgImage: '/Paket/2.jpg' },
-    { id: 3, title: '3 Day 2 Night', enTitle: '3 Day 2 Night', route: 'Komodo - Rinca - Padar - Manta Point - Pink Beach', enRoute: 'Komodo - Rinca - Padar - Manta Point - Pink Beach', price: 2750000, type: 'popular', bgImage: '/Paket/3.jpg' },
-    { id: 4, title: '4 Day 3 Night', enTitle: '4 Day 3 Night', route: 'Full Explorer + Sunset BBQ & Snorkeling Plus', enRoute: 'Full Explorer + Sunset BBQ & Snorkeling Plus', price: 3999000, promoPrice: 2999000, type: 'promo', bgImage: '/Paket/4.jpg' },
-    { id: 5, title: 'Private Trip', enTitle: 'Private Trip', route: 'Custom Trip Sesuai Keinginan Anda', enRoute: 'Custom Trip Tailored to Your Wishes', price: 0, type: 'custom', bgImage: '/Paket/5.jpg' },
-  ];
+// Data Trip (Tanpa text translation hardcode)
+const trips = [
+  { id: 1, title: '1 Day Trip', enTitle: '1 Day Trip', route: 'Labuan Bajo - Rinca - Padar - Pink Beach', enRoute: 'Labuan Bajo - Rinca - Padar - Pink Beach', price: 750000, type: 'normal', bgImage: '/Paket/1.jpg' },
+  { id: 2, title: '2 Day 1 Night', enTitle: '2 Day 1 Night', route: 'Komodo - Manta Point - Taka Makassar - Padar', enRoute: 'Komodo - Manta Point - Taka Makassar - Padar', price: 1650000, type: 'normal', bgImage: '/Paket/2.jpg' },
+  { id: 3, title: '3 Day 2 Night', enTitle: '3 Day 2 Night', route: 'Komodo - Rinca - Padar - Manta Point - Pink Beach', enRoute: 'Komodo - Rinca - Padar - Manta Point - Pink Beach', price: 2750000, type: 'popular', bgImage: '/Paket/3.jpg' },
+  { id: 4, title: '4 Day 3 Night', enTitle: '4 Day 3 Night', route: 'Full Explorer + Sunset BBQ & Snorkeling Plus', enRoute: 'Full Explorer + Sunset BBQ & Snorkeling Plus', price: 3999000, promoPrice: 2999000, type: 'promo', bgImage: '/Paket/4.jpg' },
+  { id: 5, title: 'Private Trip', enTitle: 'Private Trip', route: 'Custom Trip Sesuai Keinginan Anda', enRoute: 'Custom Trip Tailored to Your Wishes', price: 0, type: 'custom', bgImage: '/Paket/5.jpg' },
+];
 
-  export default function PaketWisata() {
-    const { lang } = useLanguage();
-    const txt = dict[lang]?.paket;
-    const scrollContainerRef = useRef<HTMLDivElement>(null);
-    const [selectedTrip, setSelectedTrip] = useState<any>(null);
-    const [pax, setPax] = useState(1);
-    const [bookingDate, setBookingDate] = useState<string>('');
-    const [step, setStep] = useState<1 | 2 | 3 | 4>(1); 
-    const [paymentMethod, setPaymentMethod] = useState<string>('');
-    const [copied, setCopied] = useState<boolean>(false);
+export default function PaketWisata() {
+  const { lang } = useLanguage();
+  const txt = dict[lang]?.paket;
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [selectedTrip, setSelectedTrip] = useState<any>(null);
+  const [pax, setPax] = useState(1);
+  const [bookingDate, setBookingDate] = useState<string>('');
+  const [step, setStep] = useState<1 | 2 | 3 | 4>(1); 
+  const [paymentMethod, setPaymentMethod] = useState<string>('');
+  const [copied, setCopied] = useState<boolean>(false);
 
-    if (!txt) return null;
+  useEffect(() => {
+    AOS.init({
+      duration: 800,
+      once: true,
+      offset: 100,
+    });
+  }, []);
 
-    // Format Rupiah
-    const formatRp = (angka: number) => {
-      if (angka === 0) return txt.contactUs;
-      return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
-    };
+  if (!txt) return null;
 
-    // Fungsi Geser Kartu
-    const scroll = (direction: 'left' | 'right') => {
-      if (scrollContainerRef.current) {
-        const scrollAmount = 320; 
-        scrollContainerRef.current.scrollBy({
-          left: direction === 'left' ? -scrollAmount : scrollAmount,
-          behavior: 'smooth'
-        });
-      }
-    };
+  // Format Rupiah
+  const formatRp = (angka: number) => {
+    if (angka === 0) return txt.contactUs;
+    return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
+  };
 
-    // Reset Modal saat ditutup
-    const closeModal = () => {
-      setSelectedTrip(null);
-      setPax(1);
-      setBookingDate('');
-      setStep(1);
-      setPaymentMethod('');
-      setCopied(false);
-    };
+  // Fungsi Geser Kartu
+  const scroll = (direction: 'left' | 'right') => {
+    if (scrollContainerRef.current) {
+      const scrollAmount = 320; 
+      scrollContainerRef.current.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth'
+      });
+    }
+  };
 
-    // Salin ke Clipboard
-    const handleCopy = (text: string) => {
-      navigator.clipboard.writeText(text);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    };
+  // Reset Modal saat ditutup
+  const closeModal = () => {
+    setSelectedTrip(null);
+    setPax(1);
+    setBookingDate('');
+    setStep(1);
+    setPaymentMethod('');
+    setCopied(false);
+  };
 
-    // Hitung Total
-    const totalPembayaran = selectedTrip ? (selectedTrip.promoPrice || selectedTrip.price) * pax : 0;
+  // Salin ke Clipboard
+  const handleCopy = (text: string) => {
+    navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
-    return (
-      <>
+  // Hitung Total
+  const totalPembayaran = selectedTrip ? (selectedTrip.promoPrice || selectedTrip.price) * pax : 0;
+
+  return (
+    <>
    <section 
   id="paketwisata" 
   className="relative z-20 -mt-8 w-full h-[100dvh] min-h-[650px] flex items-center justify-center bg-[#050810] overflow-hidden" 
@@ -88,7 +98,7 @@
             <div className="flex flex-col xl:flex-row gap-8 items-center xl:items-stretch">
               
               {/* BAGIAN KIRI: JUDUL */}
-              <div className="w-full xl:w-[320px] flex flex-col justify-center text-center xl:text-left z-10">
+              <div className="w-full xl:w-[320px] flex flex-col justify-center text-center xl:text-left z-10" data-aos="fade-up">
                 <span className="text-emerald-500 font-bold uppercase tracking-widest text-xs mb-3 block drop-shadow-md">
                   {txt.badge}
                 </span>
@@ -113,27 +123,36 @@
                   ref={scrollContainerRef} 
                   className="flex flex-nowrap items-stretch gap-6 overflow-x-auto py-10 px-4 hide-scrollbar snap-x"
                 >
-                  {trips.map((trip) => (
+                  {trips.map((trip, index) => (
                     <div 
                       key={trip.id} 
-                      className="flex-none w-[280px] snap-start relative flex flex-col transition-all duration-300 hover:-translate-y-2"
+                      // 1. Tambahkan "group" untuk trigger efek hover ke gambar di dalamnya
+                      className="group flex-none w-[280px] snap-start relative flex flex-col transition-all duration-300 hover:-translate-y-2 cursor-pointer"
+                      // 2. Tambahkan animasi AOS dengan delay berurutan (0, 100, 200, dst)
+                      data-aos="fade-up"
+                      data-aos-delay={index * 100}
                     >
                       <div className={`absolute inset-0 rounded-3xl overflow-hidden border ${
                         trip.type === 'popular' ? 'border-emerald-500 shadow-[0_10px_30px_rgba(16,185,129,0.25)]' 
                         : trip.type === 'promo' ? 'border-rose-500 shadow-[0_10px_30px_rgba(244,63,94,0.25)]'
                         : 'border-slate-700'
                       }`}>
+                        
+                        {/* 3. Efek Hover Zoom pada Background (group-hover:scale-110) */}
                         <div 
-                          className="absolute inset-0 z-0"
+                          className="absolute inset-0 z-0 transition-transform duration-700 ease-out group-hover:scale-110"
                           style={{
                             backgroundImage: `url(${trip.bgImage})`,
                             backgroundSize: 'cover',
                             backgroundPosition: 'center'
                           }}
                         ></div>
-                        <div className="absolute inset-0 bg-gradient-to-t from-[#0b1121] via-[#0b1121]/70 to-transparent z-1"></div>
+                        
+                        {/* Overlay Gradient agar teks putih tetap terbaca di atas gambar terang */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#0b1121] via-[#0b1121]/70 to-[#0b1121]/10 z-1"></div>
                       </div>
 
+                      {/* Badge Popular / Promo */}
                       {trip.type === 'popular' && (
                         <div className="absolute -top-3 left-6 z-20 bg-emerald-500 text-white text-[11px] font-extrabold px-4 py-1.5 rounded-full uppercase tracking-widest shadow-lg shadow-emerald-500/40">
                           {txt.popular}
@@ -145,6 +164,7 @@
                         </div>
                       )}
 
+                      {/* Konten Teks Kartu */}
                       <div className="relative z-10 flex flex-col h-full p-6">
                         <div className="flex-1 mt-4">
                           <h3 className="text-2xl font-bold text-white mb-3 drop-shadow-md">
@@ -200,8 +220,8 @@
         {/* MODAL PEMBAYARAN & BOOKING                               */}
         {/* ======================================================== */}
         {selectedTrip && (
-          <div className="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-[#050810]/95 backdrop-blur-sm animate-in fade-in duration-200">
-            <div className="bg-[#0b1121] rounded-3xl p-6 md:p-8 max-w-md w-full relative border border-slate-800 shadow-[0_0_50px_rgba(0,0,0,0.5)] scale-in-center max-h-[90vh] overflow-y-auto hide-scrollbar">
+          <div className="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-[#050810]/95 backdrop-blur-sm animate-in fade-in duration-200" data-aos="fade-in">
+            <div className="bg-[#0b1121] rounded-3xl p-6 md:p-8 max-w-md w-full relative border border-slate-800 shadow-[0_0_50px_rgba(0,0,0,0.5)] scale-in-center max-h-[90vh] overflow-y-auto hide-scrollbar" data-aos="zoom-in">
               
               <button 
                 onClick={closeModal} 
