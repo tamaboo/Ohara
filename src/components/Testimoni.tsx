@@ -26,7 +26,6 @@ export default function Testimoni() {
           alt="Background Testimoni" 
           className="w-full h-full object-fill brightness-95 opacity-80" 
         />
-        {/* Tambahan overlay gradient tipis agar teks lebih terbaca */}
         <div className="absolute inset-0 bg-gradient-to-b from-[#050810]/40 via-transparent to-[#050810]/80"></div>
       </div>
 
@@ -60,7 +59,13 @@ export default function Testimoni() {
               {content.title2}
             </span>
           </h2>
-          <div className="w-20 h-1 bg-gradient-to-r from-emerald-500 to-transparent mt-6 rounded-full opacity-80"></div>
+          
+          {/* Sub judul ditambahkan di sini menggantikan garis bawah */}
+          <p className="text-slate-300 text-sm md:text-base max-w-2xl mx-auto leading-relaxed drop-shadow-md mt-4">
+            {lang === 'id' 
+              ? 'Dengarkan kisah mereka yang telah menjelajahi keajaiban alam dan pesona Taman Nasional Komodo bersama kami.' 
+              : 'Hear the stories of those who have explored the natural wonders and charm of Komodo National Park with us.'}
+          </p>
         </div>
         
         {/* Baris 1 */}
